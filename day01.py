@@ -1,5 +1,5 @@
 """
-Advent of code 2023 day 1, part 1
+Advent of code 2024 day 1, part 1
 """
 
 # Set up the lists to be edited:
