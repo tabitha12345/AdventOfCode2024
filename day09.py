@@ -68,3 +68,37 @@ lengths = parse_disk_map(input_file)
 ids_and_spaces = disk_map_to_ids_and_spaces(lengths)
 compacted = compact_disk(ids_and_spaces)
 print("Part 1: Checksum:", calculate_checksum(compacted))
+
+# Part 2:
+
+
+def compact_disk_whole_files(ids_and_spaces):
+    ids_and_spaces = ids_and_spaces.copy()
+    # Find all file IDs (integers, not ".")
+    file_ids = sorted({x for x in ids_and_spaces if x != "."}, reverse=True)
+    for file_id in file_ids:
+        # Find all blocks for this file
+        indices = [i for i, x in enumerate(ids_and_spaces) if x == file_id]
+        if not indices:
+            continue
+        file_len = len(indices)
+        file_start = indices[0]
+        file_end = indices[-1]
+        # Search for leftmost span of free spaces before file_start
+        left = 0
+        while left + file_len <= file_start:
+            if all(ids_and_spaces[i] == "." for i in range(left, left + file_len)):
+                # Move file to this span
+                for i in indices:
+                    ids_and_spaces[i] = "."
+                for i in range(left, left + file_len):
+                    ids_and_spaces[i] = file_id
+                break
+            left += 1
+    return ids_and_spaces
+
+
+lengths = parse_disk_map(input_file)
+ids_and_spaces = disk_map_to_ids_and_spaces(lengths)
+compacted2 = compact_disk_whole_files(ids_and_spaces)
+print("Part 2: Checksum:", calculate_checksum(compacted2))
