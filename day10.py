@@ -50,6 +50,37 @@ def find_trailhead_scores(heightmap):
     return total_score
 
 
+# Part 2:
+# this is a copilot test
+
+
+from functools import lru_cache
+
+
+def find_trailhead_ratings(heightmap):
+    height = len(heightmap)
+    width = len(heightmap[0])
+    trailheads = [
+        (x, y) for y in range(height) for x in range(width) if heightmap[y][x] == 0
+    ]
+
+    @lru_cache(maxsize=None)
+    def dfs(x, y, h):
+        if heightmap[y][x] == 9:
+            return 1
+        total = 0
+        for nx, ny in neighbors(x, y, width, height):
+            if heightmap[ny][nx] == h + 1:
+                total += dfs(nx, ny, h + 1)
+        return total
+
+    total_rating = 0
+    for tx, ty in trailheads:
+        total_rating += dfs(tx, ty, 0)
+    return total_rating
+
+
 if __name__ == "__main__":
     heightmap = read_map(input_file)
     print("Part 1:", find_trailhead_scores(heightmap))
+    print("Part 2:", find_trailhead_ratings(heightmap))
